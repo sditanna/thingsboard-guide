@@ -18,8 +18,10 @@ MAX_RAIN_HEIGHT = 50
 
 # Define MQTT parameters
 TOPIC = 'v1/devices/me/telemetry'
-IP = '127.0.0.1'
+# For the WebUI
+IP = '127.0.0.1'                   
 PORT = 1883
+# FUNDAMENTAL - OTHERWISE DATAS WILL NOT ARRIVE TO DEVICES
 ROME_ACCESS_TOKEN = "x13UmzPu4tud5Fq1zLzL"
 MILAN_ACCESS_TOKEN = "UqbllktaQM87gMGfAapz"
 
@@ -32,6 +34,17 @@ def on_connect(client, userdata, rc, *extra_params):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
    print('Topic: ' + msg.topic + '\nMessage: ' + str(msg.payload))
+
+
+def payload():
+   payload="{"
+   payload+="\"humidity\":" + str(round(random.uniform(MIN_HUMIDITY,MAX_HUMIDITY), 2)) + ","                                        
+   payload+="\"temperature\":" + str(round(random.uniform(MIN_TEMPERATURE,MAX_TEMPERATURE), 1)) + ","
+   payload+="\"wind direction\":" + str(round(random.uniform(MIN_WIND_DIRECTION,MAX_WIND_DIRECTION), 1)) + ","
+   payload+="\"wind intensity\":" + str(round(random.uniform(MIN_WIND_INTENSITY,MAX_WIND_INTENSITY), 2)) + ","
+   payload+="\"rain height\":" + str(round(random.uniform(MIN_RAIN_HEIGHT,MAX_RAIN_HEIGHT), 2))
+   payload+="}"
+   return payload
 
 # Clients setup 
 milan_client = mqtt.Client()
@@ -51,35 +64,21 @@ rome_client.loop_start()
 
 
 
-# Message sending via MQTT 
+# Message sending via MQTT - the protocol expects data with (key:value) structure
 while True:
-    ############### FIRST STATION
-    ###############
-    ###############
-    payload="{"
-    payload+="\"humidity\":" + str(round(random.uniform(MIN_HUMIDITY,MAX_HUMIDITY), 2)) + ","
-    payload+="\"temperature\":" + str(round(random.uniform(MIN_TEMPERATURE,MAX_TEMPERATURE), 1)) + ","
-    payload+="\"wind direction\":" + str(round(random.uniform(MIN_WIND_DIRECTION,MAX_WIND_DIRECTION), 1)) + ","
-    payload+="\"wind intensity\":" + str(round(random.uniform(MIN_WIND_INTENSITY,MAX_WIND_INTENSITY), 2)) + ","
-    payload+="\"rain height\":" + str(round(random.uniform(MIN_RAIN_HEIGHT,MAX_RAIN_HEIGHT), 2))
-    payload+="}"
-    milan_client.publish(TOPIC, payload, 1)
-    print("Please check LATEST TELEMETRY field of Milan sensors")
-    print(payload)
-    ############### SECOND STATION
-    ###############
-    ###############   
-    payload="{"
-    payload+="\"humidity\":" + str(round(random.uniform(MIN_HUMIDITY,MAX_HUMIDITY), 2)) + ","
-    payload+="\"temperature\":" + str(round(random.uniform(MIN_TEMPERATURE,MAX_TEMPERATURE), 1)) + ","
-    payload+="\"wind direction\":" + str(round(random.uniform(MIN_WIND_DIRECTION,MAX_WIND_DIRECTION), 1)) + ","
-    payload+="\"wind intensity\":" + str(round(random.uniform(MIN_WIND_INTENSITY,MAX_WIND_INTENSITY), 2)) + ","
-    payload+="\"rain height\":" + str(round(random.uniform(MIN_RAIN_HEIGHT,MAX_RAIN_HEIGHT), 2))
-    payload+="}"
-    rome_client.publish(TOPIC, payload, 1)
-    print("Please check LATEST TELEMETRY field of Rome sensors")
-    print(payload)
-    time.sleep(5)
+   ############### FIRST STATION
+
+   data = payload()
+   milan_client.publish(TOPIC, data, 1)
+   print("Please check LATEST TELEMETRY field of Milan sensors")
+   print(data)
+   ############### SECOND STATION
+
+   data = payload()
+   rome_client.publish(TOPIC, data, 1)
+   print("Please check LATEST TELEMETRY field of Rome sensors")
+   print(data)
+   time.sleep(5)
 
 
 
