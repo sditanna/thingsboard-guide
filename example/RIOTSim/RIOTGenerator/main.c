@@ -121,7 +121,6 @@ int pub_data(int argc, char** argv){
     char payoff[5000];
     gen_val(payoff);
     printf("pub with topic: %s and name %s and flags 0x%02x\n", topic, payoff, (int)flags);
-    printf("PORCODDIO");
     /* step 1: get topic id */
     t.name = topic;
     if (emcute_reg(&t) != EMCUTE_OK) {
