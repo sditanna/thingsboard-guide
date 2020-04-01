@@ -14,37 +14,32 @@
 
 
 
-void sens(char* payoff)
+static int sens(int argc, char** argv)
 {
+    (void)argc;
+    (void)argv;
 
     int16_t temp;
-
     uint16_t pres;
-
     lpsxxx_t dev;
     printf("Test application for %s pressure sensor\n\n", LPSXXX_SAUL_NAME);
     printf("Initializing %s sensor\n", LPSXXX_SAUL_NAME);
     if (lpsxxx_init(&dev, &lpsxxx_params[0]) != LPSXXX_OK) {
         puts("Initialization failed");
-        return  ;
+        return  0;
     }
     
 
     lpsxxx_enable(&dev);
-
     lpsxxx_read_temp(&dev, &temp);
-
     lpsxxx_read_pres(&dev, &pres);
-
     lpsxxx_disable(&dev);
 
-    int temp_abs = temp / 100;
-    temp -= temp_abs * 100;
+    temp = temp /100;
 
-
-    sprintf(payoff,"{\"Temperature\":%2i,\"Pressure\":%i}",temp,pres);
-    printf("%s\n",payoff);
-
+    printf("{\"Temperature\":%2i \"°C\" ,\"Pressure\":%i \"hPa\"}",temp,pres);
+    
+    return 1;
 }
 
 
@@ -70,15 +65,15 @@ static void *emcute_thread(void *arg)
 }
 
 
-static unsigned get_qos(const char *str)
-{
-    int qos = atoi(str);
-    switch (qos) {
-        case 1:     return EMCUTE_QOS_1;
-        case 2:     return EMCUTE_QOS_2;
-        default:    return EMCUTE_QOS_0;
-    }
-}
+//static unsigned get_qos(const char *str)
+//{
+//    int qos = atoi(str);
+//    switch (qos) {
+//        case 1:     return EMCUTE_QOS_1;
+//        case 2:     return EMCUTE_QOS_2;
+//        default:    return EMCUTE_QOS_0;
+//    }
+//}
 
 static int cmd_con(int argc, char **argv)
 {
@@ -136,46 +131,76 @@ static int cmd_discon(int argc, char **argv)
     return 0;
 }
 
-int pub_values(int argc, char** argv){
 
-    emcute_topic_t t;
-    unsigned flags = EMCUTE_QOS_0;
-
-    
-    /* parse QoS level */
-    flags |= get_qos(argv[3]);
-    
-    char* topic = "v1/devices/me/telemetry";
-    char payoff[400];
-    sens(payoff);
-    printf("pub with topic: %s and name %s and flags 0x%02x\n", topic, payoff, (int)flags);
-
-    /* step 1: get topic id */
-    t.name = topic;
-    if (emcute_reg(&t) != EMCUTE_OK) {
-        puts("error: unable to obtain topic ID");
-        return 1;
-    }
-
-    /* step 2: publish data */
-    if (emcute_pub(&t, payoff, strlen(payoff), flags) != EMCUTE_OK) {
-        printf("error: unable to publish data to topic '%s [%i]'\n",
-                t.name, (int)t.id);
-        return 1;
-    }
-
-    printf("Published %i bytes to topic '%s [%i]'\n",
-            (int)strlen(payoff), t.name, t.id);
-
+static int sens(int argc, char** argv)
+{
     (void)argc;
     (void)argv;
-    return 0;
+
+    int16_t temp;
+    uint16_t pres;
+    lpsxxx_t dev;
+    printf("Test application for %s pressure sensor\n\n", LPSXXX_SAUL_NAME);
+    printf("Initializing %s sensor\n", LPSXXX_SAUL_NAME);
+    if (lpsxxx_init(&dev, &lpsxxx_params[0]) != LPSXXX_OK) {
+        puts("Initialization failed");
+        return  0;
+    }
+    
+
+    lpsxxx_enable(&dev);
+    lpsxxx_read_temp(&dev, &temp);
+    lpsxxx_read_pres(&dev, &pres);
+    lpsxxx_disable(&dev);
+
+    temp = temp /100;
+
+    printf("{\"Temperature\":%2i \"°C\" ,\"Pressure\":%i \"hPa\"}",temp,pres);
+    
+    return 1;
 }
+
+//int pub_values(int argc, char** argv){
+//
+//    emcute_topic_t t;
+//    unsigned flags = EMCUTE_QOS_0;
+//
+//    
+//    /* parse QoS level */
+//    flags |= get_qos(argv[3]);
+//    
+//    char* topic = "v1/devices/me/telemetry";
+//    char payoff[400];
+//    sens(payoff);
+//    printf("pub with topic: %s and name %s and flags 0x%02x\n", topic, payoff, (int)flags);
+//
+//    /* step 1: get topic id */
+//    t.name = topic;
+//    if (emcute_reg(&t) != EMCUTE_OK) {
+//        puts("error: unable to obtain topic ID");
+//        return 1;
+//    }
+//
+//    /* step 2: publish data */
+//    if (emcute_pub(&t, payoff, strlen(payoff), flags) != EMCUTE_OK) {
+//        printf("error: unable to publish data to topic '%s [%i]'\n",
+//                t.name, (int)t.id);
+//        return 1;
+//    }
+//
+//    printf("Published %i bytes to topic '%s [%i]'\n",
+//            (int)strlen(payoff), t.name, t.id);
+//
+//    (void)argc;
+//    (void)argv;
+//    return 0;
+//}
 
 static const shell_command_t shell_commands[] = {
     { "con", "connect to MQTT broker", cmd_con },
     { "discon", "disconnect from the current broker", cmd_discon },
-    {"pub_values","publish required values", pub_values},
+  //  {"pub_values","publish required values", pub_values},
+    {"sens", "get sensors values", sens},
     { NULL, NULL, NULL }
 };
 
@@ -185,7 +210,7 @@ int main(void)
          "information.");
 
     /* the main thread needs a msg queue to be able to run `ping6`*/
-    msg_init_queue(queue, ARRAY_SIZE(queue));
+    msg_init_queue(queue, (sizeof(queue) / sizeof(msg_t)));
 
     /* initialize our subscription buffers */
     memset(subscriptions, 0, (NUMOFSUBS * sizeof(emcute_sub_t)));
@@ -201,4 +226,3 @@ int main(void)
     /* should be never reached */
     return 0;
 }
-© 2020 GitHub, Inc.

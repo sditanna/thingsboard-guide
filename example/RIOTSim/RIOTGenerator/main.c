@@ -8,8 +8,9 @@
 #include "net/ipv6/addr.h"
 #include <time.h>
 
-#define MSG_LEN             (512u)
-#define MSG           "{ '%s': [ { 'ts': %llu000, 'values':{'%s': %d, '%s': %d}}],  '%s': [ { 'ts': %llu000, 'values':{'%s': %d, '%s': %d}}]}"
+#define MSG_LEN             (1024u)
+#define MSG           "{ '%s': [ { 'ts': %llu000, 'values':{'%s': %d, '%s': %d, '%s': %d, '%s': %d}}]}"
+                        
 
 
 
@@ -37,9 +38,10 @@ static void *emcute_thread(void *arg)
 void gen_val(char* payoff){
 
     char* device1 = "Rome Station";
-    char* device2 = "Milan Station";
+    //char* device2 = "Milan Station";
     
-    snprintf(payoff, MSG_LEN, MSG, device1, (unsigned long long int)time(NULL), "temperature", rand()%100,"humidity", rand()%100, device2, (unsigned long long int)time(NULL), "temperature", rand()%100,"humidity", rand()%100);
+    snprintf(payoff, MSG_LEN, MSG, device1, (unsigned long long int)time(NULL), "temperature", rand()%100,"humidity", rand()%100,
+     "wind direction", rand()%100, "wind intensity", rand()%100);
 }
 
 static unsigned get_qos(const char *str)
