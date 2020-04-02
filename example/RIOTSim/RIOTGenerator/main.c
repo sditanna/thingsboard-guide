@@ -8,6 +8,8 @@
 #include "net/ipv6/addr.h"
 #include <time.h>
 
+
+//define the message prototype
 #define MSG_LEN             (1024u)
 #define MSG           "{ '%s': [ { 'ts': %llu000, 'values':{'%s': %d, '%s': %d, '%s': %d, '%s': %d, '%s': %d}}]}"
                         
@@ -34,18 +36,20 @@ static void *emcute_thread(void *arg)
     emcute_run(EMCUTE_PORT, EMCUTE_ID);
     return NULL;    /* should never be reached */
 }
-
+//generation of random number
 int gen_ran(int min, int max)
 {
     int ret = (rand() % (max - min + 1)) + min;
     return ret;
 }
-void gen_val(char* payoff){
+
+//payload generation; thanks to snprintf we return it in a buffer
+void gen_val(char* payload){
 
     char* device1 = "Rome Station";
     //char* device2 = "Milan Station";
     
-    snprintf(payoff, MSG_LEN, MSG, device1, (unsigned long long int)time(NULL), "temperature", gen_ran(-50, 50),"humidity", gen_ran(0,100),
+    snprintf(payload, MSG_LEN, MSG, device1, (unsigned long long int)time(NULL), "temperature", gen_ran(-50, 50),"humidity", gen_ran(0,100),
      "wind direction", gen_ran(0, 360), "wind intensity", gen_ran(0, 100), "rain height", gen_ran(0, 50));
 }
 
@@ -121,29 +125,29 @@ int pub_data(int argc, char** argv){
     unsigned flags = EMCUTE_QOS_0;
 
     
-    /* parse QoS level */
+    // parse QoS level
     flags |= get_qos(argv[3]);
     
     char* topic = "v1/gateway/telemetry";
-    char payoff[5000];
-    gen_val(payoff);
-    printf("publish with topic: %s and name %s and flags 0x%02x\n", topic, payoff, (int)flags);
-    /* step 1: get topic id */
+    char payload[5000];
+    gen_val(payload);
+    printf("publish with topic: %s and name %s and flags 0x%02x\n", topic, payload, (int)flags);
+    // get topic id
     t.name = topic;
     if (emcute_reg(&t) != EMCUTE_OK) {
         puts("error: unable to obtain topic ID");
         return 1;
     }
     
-    /* step 2: publish data */
-    if (emcute_pub(&t, payoff, strlen(payoff), flags) != EMCUTE_OK) {
+    //publish data through MQTT-SN
+    if (emcute_pub(&t, payload, strlen(payload), flags) != EMCUTE_OK) {
         printf("error: unable to publish data to topic '%s [%i]'\n",
                 t.name, (int)t.id);
         return 1;
     }
 
     printf("Published %i bytes to topic '%s [%i]'\n",
-            (int)strlen(payoff), t.name, t.id);
+            (int)strlen(payload), t.name, t.id);
 
     (void)argc;
     (void)argv;
