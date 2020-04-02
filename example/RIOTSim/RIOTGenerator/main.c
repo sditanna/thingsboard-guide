@@ -9,7 +9,7 @@
 #include <time.h>
 
 #define MSG_LEN             (1024u)
-#define MSG           "{ '%s': [ { 'ts': %llu000, 'values':{'%s': %d, '%s': %d, '%s': %d, '%s': %d}}]}"
+#define MSG           "{ '%s': [ { 'ts': %llu000, 'values':{'%s': %d, '%s': %d, '%s': %d, '%s': %d, '%s': %d}}]}"
                         
 
 
@@ -35,13 +35,18 @@ static void *emcute_thread(void *arg)
     return NULL;    /* should never be reached */
 }
 
+int gen_ran(int min, int max)
+{
+    int ret = (rand() % (max - min + 1)) + min;
+    return ret;
+}
 void gen_val(char* payoff){
 
     char* device1 = "Rome Station";
     //char* device2 = "Milan Station";
     
-    snprintf(payoff, MSG_LEN, MSG, device1, (unsigned long long int)time(NULL), "temperature", rand()%100,"humidity", rand()%100,
-     "wind direction", rand()%100, "wind intensity", rand()%100);
+    snprintf(payoff, MSG_LEN, MSG, device1, (unsigned long long int)time(NULL), "temperature", gen_ran(-50, 50),"humidity", gen_ran(0,100),
+     "wind direction", gen_ran(0, 360), "wind intensity", gen_ran(0, 100), "rain height", gen_ran(0, 50));
 }
 
 static unsigned get_qos(const char *str)
@@ -122,7 +127,7 @@ int pub_data(int argc, char** argv){
     char* topic = "v1/gateway/telemetry";
     char payoff[5000];
     gen_val(payoff);
-    printf("pub with topic: %s and name %s and flags 0x%02x\n", topic, payoff, (int)flags);
+    printf("publish with topic: %s and name %s and flags 0x%02x\n", topic, payoff, (int)flags);
     /* step 1: get topic id */
     t.name = topic;
     if (emcute_reg(&t) != EMCUTE_OK) {

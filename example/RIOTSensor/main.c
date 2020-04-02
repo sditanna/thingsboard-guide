@@ -65,6 +65,36 @@ static void *emcute_thread(void *arg)
 }
 
 
+
+static int sens(int argc, char** argv)
+{
+    (void)argc;
+    (void)argv;
+
+    int16_t temp;
+    uint16_t pres;
+    lpsxxx_t dev;
+    printf("Test application for %s pressure sensor\n\n", LPSXXX_SAUL_NAME);
+    printf("Initializing %s sensor\n", LPSXXX_SAUL_NAME);
+    if (lpsxxx_init(&dev, &lpsxxx_params[0]) != LPSXXX_OK) {
+        puts("Initialization failed");
+        return  0;
+    }
+    
+
+    lpsxxx_enable(&dev);
+    lpsxxx_read_temp(&dev, &temp);
+    lpsxxx_read_pres(&dev, &pres);
+    lpsxxx_disable(&dev);
+
+    temp = temp /100;
+
+    printf("{\"Temperature\":%2i \"°C\" ,\"Pressure\":%i \"hPa\"}",temp,pres);
+    
+    return 1;
+}
+
+
 //static unsigned get_qos(const char *str)
 //{
 //    int qos = atoi(str);
