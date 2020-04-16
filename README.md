@@ -33,7 +33,7 @@ For all details of this second step, follow these links:
 
 ### 3 - LoRAWAN
 
-In this new step we will replace the MQTT protocol and the short-range wireless medium with LoRaWAN and [TheThingsNetwork](https://www.thethingsnetwork.org/). The rest of the system is like the previous tutorial, but we need a new RIOT OS application. All you need is in the folder *example/LoRa*. 
+In this new step we will replace the MQTT protocol and the short-range wireless medium with **LoRaWAN** and [**TheThingsNetwork**](https://www.thethingsnetwork.org/). The rest of the system is like the previous tutorial, but we need a new RIOT OS application. All you need is in the folder *example/LoRa*. 
 
 For all details, check the following links:
 
