@@ -1,4 +1,7 @@
-// PATH : RIOT/tests/pkg_semtech-loramac 
+/* JUST A MODIFIED VERSION 
+   OF THE EXAMPLE PROVIDED
+   BY RIOT
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -16,9 +19,12 @@
 
 semtech_loramac_t loramac;
 
+
+/* STARTING MY SIMPLE ADDITIONS FOR ENVIRONMENTAL STATION*/
+
 #define MSG           "{ '%s': [ { 'ts': %llu000, 'values':{'%s': %d, '%s': %d, '%s': %d, '%s': %d, '%s': %d}}]}"
 
-
+// Just a trivial function to generate random values
 
 int gen_ran(int min, int max)
 {
@@ -26,7 +32,8 @@ int gen_ran(int min, int max)
     return ret;
 }
 
-//payload generation; thanks to snprintf we return it in a buffer
+// Payload generation; thanks to snprintf we return it in a buffer
+
 void gen_val(char* payload){
 
     char* device1 = "Rome Station";
@@ -38,7 +45,7 @@ void gen_val(char* payload){
 
 
 
-
+/* END OF ADDITIONS FOR THE GENERATION OF VALUES */
 
 
 
@@ -476,7 +483,10 @@ static int _cmd_loramac(int argc, char **argv)
 
         return 0;
     }
-    // our case for environmental station
+    /* 
+       Our case for environmental station
+       very easy to implement
+    */
     else if (strcmp(argv[1], "start_station") == 0) {
         
         printf ("Starting environmental station\n");
@@ -581,6 +591,12 @@ static int _cmd_loramac(int argc, char **argv)
             xtimer_sleep(180);
         }
         return 0;
+        /* 
+           End of the additions; 
+           the rest of the file
+           is equal to the example
+           provided by RIOT
+        */
     }
 
     else if (strcmp(argv[1], "link_check") == 0) {
