@@ -63,7 +63,7 @@
 
           //TODO: send the message
           const Http = new XMLHttpRequest();
-          const url= "https://demo.thingsboard.io/api/v1/yoBSc95dd0N9NYNdauJC/telemetry";
+          const url= "http://localhost:9090/api/v1/yoBSc95dd0N9NYNdauJC/telemetry";
           Http.open("POST",url);
           Http.send(msg);
 
