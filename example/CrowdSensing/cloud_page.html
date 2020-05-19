@@ -20,20 +20,15 @@
   </script>
 
   <script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
-
-
-<div class="jumbotron jumbotron-fluid">
-    <div class="container">
-      <h1 class="display-4">Crowdsensing</h1>
-    </div>
-</div>
-    <script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
-    Cloud based deployment
-    <div class="embed-responsive embed-responsive-4by3">
-        <iframe class="embed-responsive-item"
-            src="http://demo.thingsboard.io:/dashboard/00fe46e0-9927-11ea-ba29-93c92b718da1?publicId=d81a7470-992a-11ea-ba29-93c92b718da1"
-            allowfullscreen></iframe>
-    </div>
+  <h1>Linear Accelerometer raw data</h1>
+  <div id="lad">No data</div>
+  <h3 id="msg"> message </h3>
+  <div class="embed-responsive embed-responsive-4by3">
+      <iframe class="embed-responsive-item"
+          src="http://demo.thingsboard.io:/dashboard/00fe46e0-9927-11ea-ba29-93c92b718da1?publicId=d81a7470-992a-11ea-ba29-93c92b718da1"
+          allowfullscreen></iframe>
+      </iframe>
+  </div>
   <script>
     let lad = document.getElementById('lad');
     let stat = document.getElementById('stat');
