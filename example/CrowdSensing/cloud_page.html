@@ -22,7 +22,6 @@
   <script type="application/javascript" src="https://api.ipify.org?format=jsonp&callback=getIP"></script>
   <h1>Linear Accelerometer raw data</h1>
   <div id="lad">No data</div>
-  <h3 id="msg"> message </h3>
   <div class="embed-responsive embed-responsive-4by3">
       <iframe class="embed-responsive-item"
           src="https://demo.thingsboard.io:/dashboard/00fe46e0-9927-11ea-ba29-93c92b718da1?publicId=d81a7470-992a-11ea-ba29-93c92b718da1"
@@ -56,7 +55,7 @@
           console.log("i:"+i);
           i++;
         }else{
-        	//create message to be sent to thingsboard
+          //Message that will be sent 
           var msg = "{\"ip\":" + ip +",\n\"data\":[\n"
           			+"{\"x\":"+x_array[0]+",\"y\":"+y_array[0]+",\"z\":"+z_array[0]+"},\n"
           			+"{\"x\":"+x_array[1]+",\"y\":"+y_array[1]+",\"z\":"+z_array[1]+"},\n"
@@ -66,7 +65,7 @@
           console.log(msg);
           message.innerHTML = msg;
 
-          //TODO: send the message
+          //HTTP Post
           const Http = new XMLHttpRequest();
           const url= "https://demo.thingsboard.io/api/v1/pDkRlsJVRJefT6yTdI6h/telemetry";
           Http.open("POST",url);

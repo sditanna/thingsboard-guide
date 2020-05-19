@@ -25,44 +25,48 @@
   <div id="lad">No data</div>
   <div id="k"> Can't compute standard deviation</div>
   <h2 id="stat"> Wait for status</h2>
-
+  <div class="embed-responsive embed-responsive-4by3">
+    <iframe class="embed-responsive-item"
+        src="https://demo.thingsboard.io:/dashboard/00fe46e0-9927-11ea-ba29-93c92b718da1?publicId=d81a7470-992a-11ea-ba29-93c92b718da1"
+        allowfullscreen></iframe>
+    </iframe>
+</div>
   <script>
     let lad = document.getElementById('lad');
     let k = document.getElementById('k');
     let stat = document.getElementById('stat');
     let ip = document.getElementById('ip').innerHTML;
-
     //thingsboard device access token
-    var token = "yoBSc95dd0N9NYNdauJC";
+    var token = "pDkRlsJVRJefT6yTdI6h";
 
-    //check sensor on device
+    //Check sensor on device
     if ( 'LinearAccelerationSensor' in window ) {
       //a window is formed by 4 relevation 
       var win = 4;
 
-      //array for saving retrived data locally
+      //Arrays for saving retrived data locally
       var x_array = [];
       var y_array = [];
       var z_array = [];
 
       var i = 0;
 
-      //initialize sensor with frequency 1Hz
+      //Initialize sensor with frequency 1Hz
       let las = new LinearAccelerationSensor({frequency: 1});
       //function exectued at each detection
       las.addEventListener('reading', function(la) {
-        // write values on html page
+        //We write the values on the page
         lad.innerHTML = 'x: ' + la.target.x + '<br> y: ' + la.target.y + '<br> z: ' + la.target.z;
         console.log('x: ' + la.target.x + '<br> y: ' + la.target.y + '<br> z: ' + la.target.z);
         if(i<win){
-          //save values in the arrays
+          //We save the values
           x_array[i] = Math.abs(la.target.x);
           y_array[i] = Math.abs(la.target.y);
           z_array[i] = Math.abs(la.target.z);
           console.log("i:"+i);
           i++;
         }else{
-          //compute standard deviation
+          //Standard deviation computation
           var j;
           
           //l_sma = 1/win * sum(x_i+y_i+z_i)
@@ -71,8 +75,6 @@
             l_sma += x_array[j] + y_array[j] + z_array[j]
           }
           l_sma /= win;
-
-
           var sosd=0;
           //sosd = (sum(x_i+y_i+z_i - l_sma)^2 / win)^1/2
           for(j=0; j<win; j++){
@@ -80,10 +82,10 @@
           }
           sosd /= win;
           sosd = Math.sqrt(sosd);
-          //print standard deviation on html page
+          //We print the standard deviation
           k.innerHTML = "standard deviation: " + sosd;
 
-          //empirical treshold for standard deviation is 0.5
+          //Simple check for the status
           if(sosd<0.5){
             stat.innerHTML = "Still";
           }
@@ -91,25 +93,25 @@
             stat.innerHTML = "Moving";
           }
 
-          //cerate message to be sent 
+          //Message that will be sent 
           var msg = "{\"user\":" + ip +",\"status\":\""+stat.innerHTML+"\"}";
           console.log("msg"+msg);
 
-          //TODO: send the message
+          //HTTP Post
 
           const Http = new XMLHttpRequest();
           const url= "https://demo.thingsboard.io/api/v1/pDkRlsJVRJefT6yTdI6h/telemetry";
           Http.open("POST",url);
           Http.send(msg);
 
-          //restert the loop
+          //Restart
           i=0;
           x_array[i] = Math.abs(la.target.x);
           y_array[i] = Math.abs(la.target.y);
           z_array[i] = Math.abs(la.target.z);
         }
       });
-      //start the sensor
+      //Start the sensor
       las.start();
     }
 
