@@ -70,6 +70,11 @@
           const url= "https://demo.thingsboard.io/api/v1/pDkRlsJVRJefT6yTdI6h/telemetry";
           Http.open("POST",url);
           Http.send(msg);
+          Http.onreadystatechange=function(){
+            if(this.readyState==4 && this.status==200){
+              console.log(Http.responseText)
+            }
+          }
 
           //restart the time window
           i=0;
