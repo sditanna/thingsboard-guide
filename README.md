@@ -45,7 +45,7 @@ For all details, check the following links:
 
 ### 4 - Crowdsensing application
 
-In this final step, we will use ThingsBoard again, but to do something different.  We will develop an HTML5 application using the [Generic Sensor API](https://www.w3.org/TR/generic-sensor/) that collects data form the [accelerator sensor of the mobile phone](https://intel.github.io/generic-sensor-demos/).
+In this final step, we will use ThingsBoard again, but to do something different.  We will develop an HTML5 application using the **[Generic Sensor API](https://www.w3.org/TR/generic-sensor/)** that collects data form the [accelerator sensor of the mobile phone](https://intel.github.io/generic-sensor-demos/).
 
 The values collected need to be transmitted to our cloud infrastructure, in our case ThingsBoard (obviously). We will do it in two different ways: with a cloud-based approach and with an edge-based approach. The steps are really simple, and all you need to do is to check the code on the CrowdSensing directory, follow the Medium article and the YouTube video!
 
